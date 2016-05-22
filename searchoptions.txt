@@ -1,0 +1,3 @@
+lund;cykel
+lund;motorcykel
+malmo;bil

@@ -35,5 +35,9 @@ def parse_page():
     items = get_item_links()
     new_items = get_new_items(items)
 
-
-parse_page()
+with open("searchoptions.txt") as file:
+    for line in file:
+        options = line.split(";")
+        CITY = options[0]
+        SEARCH_TERM = options[1]
+        parse_page()
