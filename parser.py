@@ -1,6 +1,7 @@
 from bs4 import BeautifulSoup
 from urllib2 import urlopen
 import shelve
+import re
 
 SEARCH_TERM = 'canon'
 CITY = 'stockholm'
@@ -12,11 +13,11 @@ def make_soup(url):
 
 def get_item_links():
     soup = make_soup("http://www.blocket.se/" + CITY + "?q=" + SEARCH_TERM)
-    items = [item.a["href"] for item in soup.findAll("div", { "class" : "item_row" })]
+    items = [item.a["href"] for item in soup.findAll("article", class_ = re.compile("item_row"))]
     return items
 
 def get_new_items(items):
-    sh = shelve.open('urlshelve', writeback=True)
+    sh = shelve.open('urlshelve2', writeback=True)
     new_urls = []
     try:
         urls = sh['urls']
