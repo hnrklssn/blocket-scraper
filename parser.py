@@ -17,7 +17,7 @@ def get_item_links():
     return items
 
 def get_new_items(items):
-    sh = shelve.open('urlshelve2', writeback=True)
+    sh = shelve.open('urlshelve', writeback=True)
     new_urls = []
     try:
         urls = sh['urls']
