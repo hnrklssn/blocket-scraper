@@ -57,7 +57,7 @@ def get_item_details(obj):
     return {"url": url, "price": price, "old_price": old_price, "title": title}
 
 def get_new_items(items):
-    sh = shelve.open('urlshelve3', writeback=True)
+    sh = shelve.open('urlshelve', writeback=True)
     new_items = []
     try:
         urls = sh['urls']
