@@ -1,3 +1,3 @@
-lund;cyklar;cykel
-lund;motorcyklar;yamaha
-malmo;bilar;subaru
+lund;cyklar;cykel;700;3500
+lund;motorcyklar;yamaha;10000;25000
+malmo;bilar;subaru;17000;55000

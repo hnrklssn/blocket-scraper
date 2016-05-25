@@ -3,11 +3,12 @@ from urllib2 import urlopen
 import shelve
 import re
 import sys
+from pushbullet import Pushbullet
 
 SEARCH_TERM = 'canon'
 CITY = 'stockholm'
 CATEGORY = '0'
-MIN_PRICE_DEFAULT = 0
+MIN_PRICE_DEFAULT = -1
 MAX_PRICE_DEFAULT = sys.maxint
 MIN_PRICE = MIN_PRICE_DEFAULT
 MAX_PRICE = MAX_PRICE_DEFAULT
@@ -22,7 +23,9 @@ def get_items():
     objects = [obj for obj in soup.findAll("article", class_ = re.compile("item_row"))]
     items = []
     for obj in objects:
-        items.append(get_item_details(obj))
+        item = get_item_details(obj)
+        if item["price"] >= MIN_PRICE and item["price"] <= MAX_PRICE:
+            items.append(item)
     return items
 
 def price_change(item, old_price):
@@ -96,4 +99,12 @@ with open("searchoptions.txt") as file:
          #converts category string to category number
         CATEGORY = categories[options[1].lower()]
         SEARCH_TERM = options[2]
+        try:
+            MIN_PRICE = int(options[3])
+        except:
+            MIN_PRICE = MIN_PRICE_DEFAULT
+        try:
+            MAX_PRICE = int(options[4])
+        except:
+            MAX_PRICE = MAX_PRICE_DEFAULT
         parse_page()
