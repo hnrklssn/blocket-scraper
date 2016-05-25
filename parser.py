@@ -31,9 +31,10 @@ def get_items():
     return items
 
 def price_change(item, old_price):
-    #to be implemented
-    print "Price change! " + item["title"] + " Old price: " + old_price + " New price: " + item["price"]
-    print item["url"]
+    print "Price change! " + item["title"] + " Old price: " + old_price + " New price: " + item["price"] + " URL: " + item["url"]
+    if PB_ACTIVE:
+        pb = Pushbullet(API_KEY)
+        pb.push_link("Price changed from " + str(old_price) + ":- to " + str(item["price"]) + ":- | " + item["title"], item["url"])
 
 def get_item_details(obj):
     a = obj.h1.a
@@ -65,7 +66,7 @@ def get_new_items(items):
         urls = sh['urls'] = {}
     for item in items:
         if not item["url"] in urls.iterkeys():
-            sh['urls'][item['url']] = item #{"price": item["price"], "title": item["title"]}
+            sh['urls'][item['url']] = item
             new_items.append(item)
             print item
         else:
@@ -73,8 +74,9 @@ def get_new_items(items):
             old_price = item["old_price"]
             if old_price != -1 and old_price != price:
                 last_logged_price = sh['urls'][item['url']]["price"]
-                if last_logged_price != item["price"]:
-                    price_change(item, last_logged_price)
+                dif = last_logged_price - item["price"]
+                if dif >= 100 and dif * 1.0 / last_logged_price >= 0.1 :
+                    price_change(item, min(last_logged_price, old_price))
     sh.close()
     return new_items
 
@@ -96,7 +98,7 @@ def push_item(items):
     pb = Pushbullet(API_KEY)
     for item in items:
         if item["price"] == -1:
-            price_info = "Inget pris: "
+            price_info = "No price: "
         else:
             price_info = str(item["price"]) + ":- | "
         push = pb.push_link(price_info + item["title"], item["url"])
