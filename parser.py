@@ -12,6 +12,8 @@ MIN_PRICE_DEFAULT = -1
 MAX_PRICE_DEFAULT = sys.maxint
 MIN_PRICE = MIN_PRICE_DEFAULT
 MAX_PRICE = MAX_PRICE_DEFAULT
+PB_ACTIVE = False
+API_KEY = ""
 
 def make_soup(url):
     html = urlopen(url).read()
@@ -90,7 +92,24 @@ def get_categories():
             cats[unicode(item.string).lower()] = item["value"]
     return cats
 
+def push_item(items):
+    pb = Pushbullet(API_KEY)
+    for item in items:
+        if item["price"] == -1:
+            price_info = "Inget pris: "
+        else:
+            price_info = str(item["price"]) + ":- | "
+        push = pb.push_link(price_info + item["title"], item["url"])
+
 categories = get_categories()
+
+try:
+    with open("api_key.txt") as pb_api:
+        API_KEY = pb_api.read().rstrip()
+        if len(API_KEY) > 25:
+            PB_ACTIVE = True
+except:
+    raise
 
 with open("searchoptions.txt") as file:
     for line in file:
@@ -107,4 +126,7 @@ with open("searchoptions.txt") as file:
             MAX_PRICE = int(options[4])
         except:
             MAX_PRICE = MAX_PRICE_DEFAULT
-        parse_page()
+        item_list = parse_page()
+
+        if PB_ACTIVE:
+            push_item(item_list)
